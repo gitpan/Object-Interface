@@ -1,13 +1,31 @@
 Object::Interface README
-for version 1.0
+for version 1.1
+
+
+About Object::Interface
+_______________________
 
 Object::Interface is a module whose sole purpose in life is to allow "pure
 virtual base classes" in Perl.  I wrote this module because when developing
 a program, I thought it would be nice to have compile-time checking for
-this rather than run-time checking.  (I previously implemented an interface
-or abstract base class as a module whose AUTOLOAD method checked for
-unhandled calls to specific methods.  Needless to say, this was less than
-ideal.)
+this rather than run-time checking.
+
+
+Fixes From Version 1.0
+______________________
+
+This version for Perl 5.6 actually works as advertised -- the previous
+one for some unfathomable reason worked when I was running my tests, and it
+shouldn't have been.  The problem was that the module was being called as a
+BEGIN, before the symbols in the rest of the dependent module had been
+read.  Thus, prototypes for abstract methods before the use statement were
+necessary, an ugly stopgap solution.  With Perl 5.6, the special CHECK sub
+provides the post-compile hook needed to make Object::Interface function
+work like I intended it to.
+
+
+Usage
+_____
 
 You can use Object::Interface like this:
 
@@ -18,6 +36,10 @@ You can use Object::Interface like this:
 Now any modules that specify inheriting from BaseClass must define methods
 func1, func2, and func3 or a compile error occurs.
 
+
+Other Stuff
+___________
+
 (I originally had a way to invoke Object::Interface via require, e.g.
 
   package BaseClass;
@@ -25,13 +47,16 @@ func1, func2, and func3 or a compile error occurs.
   require Object::Interface;
 
 and all methods in BaseClass would automatically be required, but I figured
-people wouldn't use it that much and it made the use invocation slower and
-more unwieldy.)
+people wouldn't use it much.  I've been thinking about re-adding it,
+however.)
 
-Admittedly, this isn't exactly a very flashy module, but one you can take
-for granted.
+Admittedly, this isn't exactly a very flashy module, but hopefully one you
+can just use take for granted.  Note that you should probably comment out
+the use Object::Interface statement in your base class module after you've
+got the bugs worked out, since Object::Interface does execute at runtime.
 
-I hope you find it useful.  Send comments or gripes my way.
+I hope you find it useful.  If you have any suggestions or comments, please
+send them my way.
 
 
 Gerad Welch [::G]
